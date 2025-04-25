@@ -1,5 +1,6 @@
 "use client";
 
+import { ConfirmationProvider } from "@/components/shared/ConfirmPrompt";
 import { SessionProvider } from "next-auth/react";
 import { ThemeProvider } from "next-themes";
 import type { PropsWithChildren } from "react";
@@ -13,7 +14,7 @@ export function Providers({ children }: PropsWithChildren) {
         enableSystem
         disableTransitionOnChange
       >
-        {children}
+        <ConfirmationProvider>{children}</ConfirmationProvider>
       </ThemeProvider>
     </SessionProvider>
   );

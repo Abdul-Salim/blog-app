@@ -9,12 +9,14 @@ import { Button } from "@/components/ui/button";
 import { ChevronLeft, LucideTrash, LucideTrash2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useSession } from "next-auth/react";
-import { notFound } from "next/navigation";
+import { notFound, useRouter } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
 import rehypeSanitize from "rehype-sanitize";
 import { Category } from "@/types/blog";
 import { use } from "react";
+import { toast } from "sonner";
+import { useConfirmation } from "@/components/shared/ConfirmPrompt";
 
 export default function PostPage({ params }: { params: any }) {
   const resolvedParams: { slug: string } = use(params);
@@ -24,6 +26,32 @@ export default function PostPage({ params }: { params: any }) {
   const { data: session } = useSession();
   const isAdmin = session?.user?.role === "ADMIN";
   const categories = post?.categories as Category[];
+  const router = useRouter();
+  const { openDialog } = useConfirmation();
+  const handleDelete = async () => {
+    const confirmed = await openDialog({
+      title: "Delete Post",
+      description: "Are you sure you want to delete this post?",
+    });
+    if (confirmed.ok) {
+      try {
+        const response = await fetch(`/api/posts/${slug}`, {
+          method: "DELETE",
+        });
+
+        if (response.ok) {
+          alert("Post deleted successfully.");
+          router.push("/blog");
+        } else {
+          const errorData = await response.text();
+          alert(`Error deleting post: ${errorData}`);
+        }
+      } catch (error) {
+        console.error("Failed to delete post:", error);
+        alert("An error occurred while deleting the post.");
+      }
+    }
+  };
 
   if (error) {
     if (error.message === "Post not found") {
@@ -101,7 +129,7 @@ export default function PostPage({ params }: { params: any }) {
             <Button variant="outline" size="sm" asChild>
               <Link href={`/admin/posts/edit/${post.slug}`}>Edit</Link>
             </Button>
-            <Button variant="outline" size="sm">
+            <Button variant="outline" size="sm" onClick={handleDelete}>
               Delete
             </Button>
           </div>
