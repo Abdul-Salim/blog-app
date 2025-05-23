@@ -4,24 +4,17 @@ export default function AboutPage() {
       <div className="space-y-4">
         <h1 className="text-3xl font-bold tracking-tight">About Me</h1>
         <p className="text-muted-foreground">
-          Welcome to my personal blog. I write about topics that interest me.
+          Welcome to Webalkoon. This is a simple, personal blog app where you
+          can read and share your thoughts and ideas about web development.
         </p>
       </div>
 
       <div className="prose prose-slate dark:prose-invert">
         <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, velit vel
-          bibendum bibendum, velit velit bibendum velit, vel bibendum velit vel bibendum
-          velit. Sed euismod, velit vel bibendum bibendum, velit velit bibendum velit, vel
-          bibendum velit vel bibendum velit.
-        </p>
-
-        <h2>My Background</h2>
-        <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, velit vel
-          bibendum bibendum, velit velit bibendum velit, vel bibendum velit vel bibendum
-          velit. Sed euismod, velit vel bibendum bibendum, velit velit bibendum velit, vel
-          bibendum velit vel bibendum velit.
+          I'm a web developer with a passion for building web applications. I
+          love to code and learn new things. Currently, I'm working as a
+          Software Engineer at{" "}
+          <a href="https://www.ileafsolutions.com">iLeaf Solutions</a>.
         </p>
 
         <h2>My Interests</h2>
@@ -34,8 +27,9 @@ export default function AboutPage() {
 
         <h2>Contact Me</h2>
         <p>
-          Feel free to reach out to me at <a href="mailto:example@example.com">example@example.com</a> or
-          connect with me on social media.
+          Feel free to reach out to me at{" "}
+          <a href="mailto:abdulsalimplr@gmail.com">abdulsalimplr@gmail.com</a>{" "}
+          or connect with me on social media.
         </p>
       </div>
     </div>

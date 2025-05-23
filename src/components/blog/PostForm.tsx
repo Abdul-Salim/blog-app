@@ -35,13 +35,22 @@ import { ScrollArea } from "../ui/scroll-area";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Textarea } from "../ui/textarea";
-import { Post } from "@/types/blog";
+import { Category, Post } from "@/types/blog";
 import { useRouter } from "next/navigation";
+import MarkdownEditor from "./Editor";
 
 const postSchema = z.object({
-  title: z.string().min(3).max(100),
-  content: z.string().min(10),
-  excerpt: z.string().max(200).optional(),
+  title: z
+    .string()
+    .min(3, "Title is required and should be at least 3 characters")
+    .max(100, "Title must be less than 100 characters"),
+  content: z
+    .string()
+    .min(10, "Content is required and should be at least 10 characters"),
+  excerpt: z
+    .string()
+    .max(200, "Excerpt must be less than 200 characters")
+    .optional(),
   coverImage: z.string().url().optional().or(z.literal("")),
   categories: z.array(z.string()).optional(),
   published: z.boolean(),
@@ -58,18 +67,30 @@ const PostForm: React.FC<PostFormProps> = ({ onSubmit, defaultValues }) => {
   const { categories, loading: categoriesLoading } = useCategories();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [newCategory, setNewCategory] = useState("");
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<Category[]>([]);
   const addCategory = (category: string) => {
-    if (category && !selectedCategories.includes(category)) {
-      setSelectedCategories([...selectedCategories, category]);
+    if (category && !selectedCategories.some((c) => c.name === category)) {
+      const existingCategory = categories.find((c) => c.name === category);
+      if (existingCategory) {
+        // If the category exists, add it by ID
+        setSelectedCategories([...selectedCategories, existingCategory]);
+      } else {
+        // If the category does not exist, create a new category object
+        const newCategory = {
+          name: category,
+          slug: category.toLowerCase().replace(/\s+/g, "-"),
+        }; // Only name and slug
+        setSelectedCategories([...selectedCategories, newCategory]);
+      }
     }
     setNewCategory("");
   };
   const router = useRouter();
 
-  console.log(defaultValues);
   const removeCategory = (category: string) => {
-    setSelectedCategories(selectedCategories.filter((c) => c !== category));
+    setSelectedCategories(
+      selectedCategories.filter((c) => c.slug !== category)
+    );
   };
   const form = useForm<FormValues>({
     resolver: zodResolver(postSchema),
@@ -86,7 +107,7 @@ const PostForm: React.FC<PostFormProps> = ({ onSubmit, defaultValues }) => {
   const submitHandler = async (values: FormValues) => {
     setIsSubmitting(true);
     try {
-      values.categories = selectedCategories;
+      values.categories = selectedCategories.map((c) => c.slug);
       await onSubmit(values);
     } catch (error) {
       console.log(error);
@@ -98,7 +119,7 @@ const PostForm: React.FC<PostFormProps> = ({ onSubmit, defaultValues }) => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(submitHandler)} className="space-y-8">
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-6">
           <div className="space-y-6">
             <FormField
               control={form.control}
@@ -156,20 +177,20 @@ const PostForm: React.FC<PostFormProps> = ({ onSubmit, defaultValues }) => {
               <div className="flex flex-wrap gap-2 mb-2">
                 {selectedCategories.map((category) => (
                   <Badge
-                    key={category}
+                    key={category.slug}
                     variant="secondary"
                     className="flex items-center gap-1"
                   >
-                    {category}
+                    {category?.name ?? ""}
                     <Button
                       type="button"
                       variant="ghost"
                       size="sm"
                       className="h-4 w-4 p-0 hover:bg-transparent"
-                      onClick={() => removeCategory(category)}
+                      onClick={() => removeCategory(category?.slug)}
                     >
                       <X className="h-3 w-3" />
-                      <span className="sr-only">Remove {category}</span>
+                      <span className="sr-only">Remove {category?.name}</span>
                     </Button>
                   </Badge>
                 ))}
@@ -220,9 +241,7 @@ const PostForm: React.FC<PostFormProps> = ({ onSubmit, defaultValues }) => {
                               >
                                 <div className="flex items-center">
                                   <span>{category.name}</span>
-                                  {selectedCategories.includes(
-                                    category.name
-                                  ) && (
+                                  {selectedCategories.includes(category) && (
                                     <CheckIcon className="ml-auto h-4 w-4" />
                                   )}
                                 </div>
@@ -283,7 +302,6 @@ const PostForm: React.FC<PostFormProps> = ({ onSubmit, defaultValues }) => {
               )}
             />
           </div>
-
           <div className="space-y-6">
             <FormField
               control={form.control}
@@ -292,10 +310,9 @@ const PostForm: React.FC<PostFormProps> = ({ onSubmit, defaultValues }) => {
                 <FormItem>
                   <FormLabel>Content</FormLabel>
                   <FormControl>
-                    <Textarea
-                      placeholder="Write your post content here (markdown supported)"
-                      className="min-h-[400px]"
-                      {...field}
+                    <MarkdownEditor
+                      value={field.value}
+                      onChange={field.onChange}
                     />
                   </FormControl>
                   <FormDescription>
@@ -307,6 +324,7 @@ const PostForm: React.FC<PostFormProps> = ({ onSubmit, defaultValues }) => {
             />
           </div>
         </div>
+
         <div className="flex justify-end gap-4">
           <Button
             type="button"
@@ -317,7 +335,7 @@ const PostForm: React.FC<PostFormProps> = ({ onSubmit, defaultValues }) => {
           </Button>
           <Button type="submit" disabled={isSubmitting}>
             {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Create Post
+            {defaultValues?.id ? "Update" : "Create"} Post
           </Button>
         </div>
       </form>

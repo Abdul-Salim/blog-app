@@ -33,7 +33,7 @@ export async function GET(
       return new NextResponse("Not Found", { status: 404 });
     }
 
-    // If the post is not published, only allow admin to view it
+    // If the post is not published, only allow admin and owner to view it
     if (!post.published) {
       const session = await getServerSession();
 
@@ -42,8 +42,10 @@ export async function GET(
       }
 
       const isUserAdmin = await isAdmin(session.user.email);
+      const isOwner = session.user.id == post.authorId;
+      console.log(session.user, post.authorId);
 
-      if (!isUserAdmin) {
+      if (!isUserAdmin && !isOwner) {
         return new NextResponse("Forbidden", { status: 403 });
       }
     }

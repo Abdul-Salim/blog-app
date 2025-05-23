@@ -28,7 +28,7 @@ export default function NewPostPage() {
 
       const post = await response.json();
       toast.success("Post created successfully!");
-      router.push("/admin/dashboard");
+      router.push("/user/dashboard");
     } catch (error) {
       console.error("Error creating post:", error);
       toast.error("Failed to create post");
@@ -36,10 +36,10 @@ export default function NewPostPage() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="space-y-6">
       <div className="flex items-center">
         <Button variant="outline" size="sm" className="mr-4" asChild>
-          <Link href="/admin/dashboard">
+          <Link href="/user/dashboard">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back
           </Link>

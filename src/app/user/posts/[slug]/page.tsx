@@ -24,31 +24,33 @@ export default function PostPage({ params }: { params: any }) {
 
   const { post, loading, error } = usePost(slug);
   const { data: session } = useSession();
-  const isAdmin = session?.user?.role === "ADMIN";
+  const isOwner = session?.user?.id === post?.authorId;
   const categories = post?.categories as Category[];
   const router = useRouter();
   const { openDialog } = useConfirmation();
   const handleDelete = async () => {
-    const confirmed = await openDialog({
-      title: "Delete Post",
-      description: "Are you sure you want to delete this post?",
-    });
-    if (confirmed.ok) {
-      try {
-        const response = await fetch(`/api/posts/${slug}`, {
-          method: "DELETE",
-        });
+    if (isOwner) {
+      const confirmed = await openDialog({
+        title: "Delete Post",
+        description: "Are you sure you want to delete this post?",
+      });
+      if (confirmed.ok) {
+        try {
+          const response = await fetch(`/api/posts/${slug}`, {
+            method: "DELETE",
+          });
 
-        if (response.ok) {
-          alert("Post deleted successfully.");
-          router.push("/blog");
-        } else {
-          const errorData = await response.text();
-          alert(`Error deleting post: ${errorData}`);
+          if (response.ok) {
+            alert("Post deleted successfully.");
+            router.push("/blog");
+          } else {
+            const errorData = await response.text();
+            alert(`Error deleting post: ${errorData}`);
+          }
+        } catch (error) {
+          console.error("Failed to delete post:", error);
+          alert("An error occurred while deleting the post.");
         }
-      } catch (error) {
-        console.error("Failed to delete post:", error);
-        alert("An error occurred while deleting the post.");
       }
     }
   };
@@ -82,9 +84,9 @@ export default function PostPage({ params }: { params: any }) {
       <div className="space-y-8">
         <div className="flex items-center space-x-2">
           <Button variant="outline" size="sm" asChild>
-            <Link href="/blog">
+            <Link href="/user/dashboard">
               <ChevronLeft className="mr-2 h-4 w-4" />
-              Back to Blog
+              Back to Dashboard
             </Link>
           </Button>
         </div>
@@ -116,20 +118,21 @@ export default function PostPage({ params }: { params: any }) {
 
   return (
     <div className="space-y-8">
-      <div className="flex items-center justify-between">
-        <Button variant="outline" size="sm" asChild>
-          <Link href="/blog">
-            <ChevronLeft className="mr-2 h-4 w-4" />
-            Back to Blog
-          </Link>
-        </Button>
-
-        {isAdmin && (
+      <div className="flex items-center justify-between w-full">
+        <div className="flex items-center space-x-2">
+          <Button variant="outline" size="sm" asChild>
+            <Link href="/user/dashboard">
+              <ChevronLeft className="mr-2 h-4 w-4" />
+              Back to Dashboard
+            </Link>
+          </Button>
+        </div>
+        {isOwner && (
           <div className="flex items-center gap-2">
             <Button variant="outline" size="sm" asChild>
-              <Link href={`/admin/posts/edit/${post.slug}`}>Edit</Link>
+              <Link href={`/user/posts/edit/${post.slug}`}>Edit</Link>
             </Button>
-            <Button variant="outline" size="sm" onClick={handleDelete}>
+            <Button size="sm" onClick={handleDelete}>
               Delete
             </Button>
           </div>

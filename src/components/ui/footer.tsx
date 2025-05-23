@@ -7,15 +7,15 @@ export function Footer() {
     <footer className="border-t py-6 md:py-0">
       <div className="container flex flex-col items-center justify-between gap-4 md:h-16 md:flex-row">
         <p className="text-sm text-muted-foreground text-center md:text-left">
-          &copy; {currentYear} Personal Blog. All rights reserved.
+          &copy; {currentYear} Webalkoon. All rights reserved.
         </p>
         <div className="flex items-center gap-4">
-          <Link
+          {/* <Link
             href="/about"
             className="text-sm text-muted-foreground transition-colors hover:text-primary"
           >
             About
-          </Link>
+          </Link> */}
           <Link
             href="/contact"
             className="text-sm text-muted-foreground transition-colors hover:text-primary"

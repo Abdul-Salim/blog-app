@@ -11,6 +11,7 @@ export async function GET(req: NextRequest) {
     const category = searchParams.get("category");
     const limit = Number(searchParams.get("limit") || 10);
     const page = Number(searchParams.get("page") || 1);
+    const userId = searchParams.get("userId");
     const skip = (page - 1) * limit;
 
     const whereClause: Record<string, string | boolean | object> = {};
@@ -25,6 +26,10 @@ export async function GET(req: NextRequest) {
           slug: category,
         },
       };
+    }
+
+    if (userId) {
+      whereClause.authorId = userId;
     }
 
     const posts = await db.post.findMany({
@@ -77,11 +82,11 @@ export async function POST(req: NextRequest) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    const isUserAdmin = await isAdmin(session.user.email);
+    // const isUserAdmin = await isAdmin(session.user.email);
 
-    if (!isUserAdmin) {
-      return new NextResponse("Forbidden", { status: 403 });
-    }
+    // if (!isUserAdmin) {
+    //   return new NextResponse("Forbidden", { status: 403 });
+    // }
 
     const body = await req.json();
     const {

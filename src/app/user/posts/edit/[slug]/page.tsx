@@ -45,8 +45,8 @@ export default function EditPost({ params }: { params: any }) {
 
   if (post)
     return (
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-2xl font-bold mb-4">Edit Post</h1>
+      <div>
+        <h1>Edit Post</h1>
 
         <PostForm
           defaultValues={{

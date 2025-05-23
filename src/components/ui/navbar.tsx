@@ -21,17 +21,9 @@ export function Navbar() {
       <div className="container flex h-16 items-center justify-between">
         <div className="flex items-center gap-6 md:gap-10">
           <Link href="/" className="flex items-center space-x-2">
-            <span className="text-xl font-bold tracking-tight">
-              Personal Blog
-            </span>
+            <span className="text-xl font-bold tracking-tight">Webalkoon</span>
           </Link>
-          <nav className="hidden md:flex gap-6">
-            <Link
-              href="/"
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
-            >
-              Home
-            </Link>
+          <nav className="hidden md:flex gap-6 items-center">
             <Link
               href="/blog"
               className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
@@ -44,52 +36,80 @@ export function Navbar() {
             >
               Categories
             </Link>
-            <Link
+            {session && !isAdmin && (
+              <Link
+                href="/user/posts/new"
+                className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+              >
+                New Post
+              </Link>
+            )}
+            {session && isAdmin && (
+              <Link
+                href="/admin/posts/new"
+                className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+              >
+                New Post
+              </Link>
+            )}
+            {/* <Link
               href="/about"
               className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
             >
               About
-            </Link>
+            </Link> */}
           </nav>
         </div>
         <div className="flex items-center gap-2">
           {session ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="rounded-full">
-                  <UserCircle2 className="h-6 w-6" />
-                  <span className="sr-only">User menu</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <div className="flex items-center justify-start gap-2 p-2">
-                  <div className="flex flex-col space-y-1 leading-none">
-                    <p className="font-medium">{session.user.name}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {session.user.email}
-                    </p>
+            <>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="rounded-full">
+                    <UserCircle2 scale={1.5} />
+                    <span className="sr-only">User menu</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <div className="flex items-center justify-start gap-2 p-2">
+                    <div className="flex flex-col space-y-1 leading-none">
+                      <p className="font-medium">{session.user.name}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {session.user.email}
+                      </p>
+                    </div>
                   </div>
-                </div>
-                <DropdownMenuSeparator />
-                {isAdmin && (
-                  <>
-                    <DropdownMenuItem asChild>
-                      <Link href="/admin/dashboard">Dashboard</Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link href="/admin/posts/new">New Post</Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                  </>
-                )}
-                <DropdownMenuItem
-                  className="cursor-pointer"
-                  onClick={() => signOut({ callbackUrl: "/" })}
-                >
-                  Sign Out
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+                  <DropdownMenuSeparator />
+                  {isAdmin && (
+                    <>
+                      <DropdownMenuItem asChild>
+                        <Link href="/admin/dashboard">Dashboard</Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link href="/admin/posts/new">New Post</Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                    </>
+                  )}
+                  {!isAdmin && (
+                    <>
+                      <DropdownMenuItem asChild>
+                        <Link href="/user/dashboard">Dashboard</Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link href="/user/posts/new">New Post</Link>
+                      </DropdownMenuItem>
+                    </>
+                  )}
+                  <DropdownMenuItem
+                    className="cursor-pointer"
+                    onClick={() => signOut({ callbackUrl: "/" })}
+                  >
+                    Sign Out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </>
           ) : (
             <div className="flex gap-2">
               <Button variant="ghost" asChild>

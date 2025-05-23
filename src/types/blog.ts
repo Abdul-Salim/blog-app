@@ -37,7 +37,7 @@ export interface ApiPost {
 }
 
 export interface Category {
-  id: string;
+  id?: string;
   name: string;
   slug: string;
   description?: string | null;

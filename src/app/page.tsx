@@ -13,10 +13,11 @@ export default function HomePage() {
     <div className="space-y-10">
       <section className="text-center space-y-4">
         <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
-          Welcome to my Personal Blog
+          Welcome to Webalkoon
         </h1>
         <p className="text-xl text-muted-foreground mx-auto max-w-2xl">
-          Discover thoughts, insights, and stories about programming, technology, and more.
+          Discover thoughts, insights, and stories about web development,
+          technology, and more.
         </p>
       </section>
 
@@ -43,7 +44,9 @@ export default function HomePage() {
             ))}
             {data?.posts.length === 0 && (
               <div className="col-span-full text-center py-10">
-                <p className="text-muted-foreground">No posts found. Check back later!</p>
+                <p className="text-muted-foreground">
+                  No posts found. Check back later!
+                </p>
               </div>
             )}
           </div>

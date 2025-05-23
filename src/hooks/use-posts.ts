@@ -1,12 +1,15 @@
 import { useState, useEffect } from "react";
 import type { PaginatedPosts, ApiPaginatedPosts, ApiPost } from "@/types/blog";
 
-export function usePosts(options: {
-  page?: number;
-  limit?: number;
-  published?: boolean;
-  category?: string;
-} = {}) {
+export function usePosts(
+  options: {
+    page?: number;
+    limit?: number;
+    published?: boolean;
+    category?: string;
+    userId?: string;
+  } = {}
+) {
   const [data, setData] = useState<PaginatedPosts | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -29,6 +32,9 @@ export function usePosts(options: {
         }
         if (options.category) {
           searchParams.set("category", options.category);
+        }
+        if (options.userId) {
+          searchParams.set("userId", options.userId);
         }
 
         const response = await fetch(`/api/posts?${searchParams}`);
@@ -58,7 +64,13 @@ export function usePosts(options: {
     }
 
     fetchPosts();
-  }, [options.page, options.limit, options.published, options.category]);
+  }, [
+    options.page,
+    options.limit,
+    options.published,
+    options.category,
+    options.userId,
+  ]);
 
   return { data, loading, error };
 }

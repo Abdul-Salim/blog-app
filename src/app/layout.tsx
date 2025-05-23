@@ -8,8 +8,9 @@ import { Providers } from "@/app/providers";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Personal Blog",
-  description: "A simple, personal blog built with Next.js",
+  title: "Webalkoon",
+  description:
+    "A simple, personal blog app where you can share your thoughts and ideas about web development",
 };
 
 export default function RootLayout({
