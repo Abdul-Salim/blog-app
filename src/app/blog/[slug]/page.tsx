@@ -11,6 +11,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useSession } from "next-auth/react";
 import { notFound, useRouter } from "next/navigation";
 import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 import rehypeSanitize from "rehype-sanitize";
 import { Category } from "@/types/blog";
@@ -182,7 +183,7 @@ export default function PostPage({ params }: { params: any }) {
           </div>
         )}
 
-        <ReactMarkdown rehypePlugins={[rehypeRaw, rehypeSanitize]}>
+        <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw, rehypeSanitize]}>
           {post.content}
         </ReactMarkdown>
       </article>
